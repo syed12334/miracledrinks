@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD-->
+<head>
+	<meta charset="UTF-8" />
+	<title><?php echo title; ?></title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<meta content="" name="description" />
+	<meta content="" name="author" />
+	<!--[if IE]>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<![endif]-->
+	<!-- GLOBAL STYLES -->
+	<!-- GLOBAL STYLES -->
+	<link rel="stylesheet" href="<?php echo asset_url(); ?>css/style.min.css" />
+	<!-- <link rel="stylesheet" href="<?php echo asset_url(); ?>plugins/bootstrap/css/bootstrap.css" />
+	<link rel="stylesheet" href="<?php echo asset_url(); ?>css/main.css" />
+	<link rel="stylesheet" href="<?php echo asset_url(); ?>css/theme.css" />
+	<link rel="stylesheet" href="<?php echo asset_url(); ?>css/MoneAdmin.css" />
+	<link rel="stylesheet" href="<?php echo asset_url(); ?>plugins/Font-Awesome/css/font-awesome.css" /> -->
+	<script type="text/javascript" src="<?php echo asset_url(); ?>js/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://www.srisankaratv.com/admin_manage/assets/libs/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css">
+<?php echo $updatelogin; ?>
+</head>
+<!-- END  HEAD-->
+<!-- BEGIN BODY-->
+
+<body class="padTop53 ">
+<div id="main-wrapper">
+
+<!-- HEADER SECTION -->
+<?php echo $header; ?>
+<!-- END HEADER SECTION -->
+
+
+
+<!-- MENU SECTION -->
+<?php echo $left; ?>
+<!--END MENU SECTION -->
+
+
+<!--PAGE CONTENT -->
+<div class="page-wrapper">
+<!-- ============================================================== -->
+<!-- Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<div class="row page-titles">
+<div class="col-md-5 col-12 align-self-center">
+<h3 class="text-themecolor mb-0">Coupons</h3>
+<ol class="breadcrumb mb-0">
+<li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="javascript:void(0)">Masters</a></li>
+<li class="breadcrumb-item active">Coupons</li>
+</ol>
+</div>
+<div class="col-md-7 col-12 align-self-center d-none d-md-block">
+
+</div>
+</div>
+<div class="container-fluid" id="content">
+<div class="inner" style="min-height:1200px;">
+<div class="row">
+<div class="col-lg-12">
+<?php if ($type == 'edit') : ?>
+
+<div class="card">
+<div class="card-header">
+<h5>Edit Coupon</h5>
+</div>
+
+<div id="collapseOne" class="card-body">
+<form action="<?php echo base_url() . 'voucher/voucher_edit'; ?>" class="form-horizontal form-material row" id="organization_validate" method="post" onsubmit="return validatefinal();" enctype="multipart/form-data">
+<input type="hidden" id="aid" name="aid" class="form-control" value="<?php echo $details[0]->id; ?>" />
+
+<div class="form-group col-md-6">
+<label class="control-label">Coupon Type<font style="color: red;">*</font></label>
+<select id="type" name="type" class="form-control" required title="Enter Coupon Type">
+<option value="">--Select--</option>
+<option value="0" <?php if ($details[0]->type == "0") { ?>selected="selected" <?php } ?>>Single Usage</option>
+<option value="1" <?php if ($details[0]->type == "1") { ?>selected="selected" <?php } ?>>Multiple Usage</option>
+</select>
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">Coupon Title<font style="color: red;">*</font></label>
+<input type="text" id="title" name="title" title="Enter Coupon Title" class="form-control" required value="<?php echo $details[0]->title ?>" />
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">From Date<font style="color: red;">*</font></label>
+<input type="text" id="fromdate" name="fromdate" title="Enter From Date" class="form-control today_date_time" required readonly="readonly" value="<?php echo date_format(date_create($details[0]->from_date), 'd-m-Y'); ?>">
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">To Date<font style="color: red;">*</font></label>
+<input type="text" id="todate" name="todate" title="Enter To Date" class="form-control today_date_time" required readonly="readonly" value="<?php echo date_format(date_create($details[0]->to_date), 'd-m-Y'); ?>">
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">Discount(%)<font style="color: red;">*</font></label>
+<input type="text" id="discount" name="discount" class="form-control floatval" title="Enter Discount" required value="<?php echo $details[0]->discount; ?>">
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">Prefix of Coupon Code<font style="color: red;">*</font></label>
+<?php echo $details[0]->prefix; ?><input type="hidden" name="prefix" id="prefix" value="<?php echo $details[0]->prefix ?>">
+</div>
+
+
+<?php $check = $this->master_db->getcontent1('voucher_code', 'cid', $details[0]->id); ?>
+
+<div class="form-group col-md-12">
+<h5>Existing Coupon Codes</h5>
+<div class="card">
+<div class="card-header bg-info text-white">
+<h5 class="text-white m-0">Existing Coupon Codes (<?php echo count($check); ?>)
+<span class="toolbar pull-right">
+<span class="btn-group">
+<a class="btn btn-default btn-sm accordion-toggle minimize-box collapsed pull-right text-white" data-toggle="collapse" href="#sortableTable">
+<i class="fas fa-angle-down"></i>
+</a>
+</span>
+</span>
+</h5>
+</div>
+<div class="card-body collapse" id="sortableTable">
+<div <?php if (count($check) > 12) { ?> style="overflow-y:scroll;height:500px;" <?php } ?>>
+<table class="table table-striped table-bordered table-hover">
+<thead>
+<th>Sl No</th>
+<th>Coupon Code</th>
+<th>Reset</th>
+<th>Change Status</th>
+</thead>
+<tbody>
+<?php if (is_array($check)) { ?>
+<?php $i = 0;
+foreach ($check as $c) { ?>
+<tr>
+<td><?php echo $i = $i + 1; ?></td>
+<td><?php echo $c->code ?><input type="hidden" name="excode[]" value="<?php echo $c->code; ?>"></td>
+<td><select class="form-control" name="reset[]">
+<option value="<?php echo $c->used_count; ?>">No</option>
+<option value="0">Yes</option>
+</select></td>
+<td><select class="form-control" name="active[]">
+<option value="0">Active</option>
+<option value="1" <?php if ($c->status == "1") { ?>selected="selected" <?php } ?>>In-Active</option>
+</select></td>
+</tr>
+<?php
+}
+} else { ?>
+<tr>
+<td colspan="4">No Coupon Codes</td>
+</tr>
+<?php }
+?>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">Want to Generate New Coupon Codes?<font style="color: red;">*</font></label>
+<select class="form-control" name="newcode" id="newcode">
+<option value="0">No</option>
+<option value="1">Yes</option>
+</select>
+</div>
+<div id="new" style="display: none;">
+<div class="form-group col-md-6">
+<label class="control-label">No of Coupon Codes<font style="color: red;">*</font></label>
+<input type="text" id="code" name="code" class="form-control onlynumbers" title="Enter No of Coupon Codes" required="required" value="1">
+<button type="button" class="btn btn-info" onclick="validate(1);"><i class="icon-save"></i> Generate</button>
+</div>
+
+<div id="p"></div>
+</div>
+<div class="col-md-12">
+<div class="form-actions no-margin-bottom" style="text-align:center;">
+<a href="<?php echo base_url() . 'voucher/gift_vouchers'; ?>" class="btn btn-primary"><i class="mdi mdi-arrow-left"></i> Back</a>&nbsp;&nbsp;&nbsp;
+<button type="submit" class="btn btn-info"><i class="mdi mdi-check "></i> Save Changes</button>
+</div>
+
+<div id="msgbox"></div>
+</div>
+</form>
+</div>
+</div>
+
+
+
+<?php else : ?>
+
+<div class="col-lg-12">
+<div class="card">
+<div class="card-header">
+<h5>Add Coupons</h5>
+</div>
+
+<div id="collapseOne" class="card-body">
+<form action="<?php echo base_url() . 'voucher/voucher_save'; ?>" class="form-horizontal form-material row" id="organization_validate" method="post" enctype="multipart/form-data" onsubmit="return validatefinal();">
+
+<input type="hidden" id="aid" name="aid" class="form-control" value="0" />
+
+<div class="form-group col-md-6">
+<label class="control-label">Coupon Type<font style="color: red;">*</font></label>
+<select id="type" name="type" class="form-control" title="Select Coupon Type" required>
+<option value="">--Select--</option>
+<option value="0">Single Usage</option>
+<option value="1">Multiple Usage</option>
+</select>
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">Coupon Title<font style="color: red;">*</font></label>
+<input type="text" id="title" name="title" title="Enter Coupon Title" class="form-control" required />
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">From Date<font style="color: red;">*</font></label>
+<input type="text" id="fromdate" name="fromdate" title="Select From Date" class="form-control today_date_time" required readonly="readonly">
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">To Date<font style="color: red;">*</font></label>
+<input type="text" id="todate" name="todate" class="form-control today_date_time" title="Select To Date" required readonly="readonly">
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">Discount(%)<font style="color: red;">*</font></label>
+<input type="text" id="discount" name="discount" title="Enter Discount" class="form-control floatval" required>
+</div>
+
+
+<div class="form-group col-md-6">
+<label class="control-label">No of Coupon Codes<font style="color: red;">*</font></label>
+<input type="text" id="code" name="code" title="Enter No of Coupon Codes" class="form-control onlynumbers" required>
+</div>
+
+<div class="form-group col-md-6">
+<label class="control-label">Prefix of Coupon Code<font style="color: red;">*</font></label>
+<input type="text" id="prefix" name="prefix" title="Enter Prefix of Coupon Code" class="form-control" required>
+</div>
+
+<div class="col-md-12">
+<div class="form-actions no-margin-bottom" style="text-align:center;">
+<a href="<?php echo base_url() . 'voucher/gift_vouchers'; ?>" class="btn btn-primary"><i class="mdi mdi-arrow-left"></i> Back</a>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-info" onclick="validate(0);"><i class="mdi mdi-file-hidden"></i> Generate</button>
+</div>
+<div id="p">
+
+</div>
+<div id="msgbox"></div>
+</div>
+</form>
+</div>
+
+</div>
+</div>
+<?php endif; ?>
+</div>
+
+</div>
+
+</div>
+</div>
+
+<!--END PAGE CONTENT -->
+</div>
+</div>
+<!--END MAIN WRAPPER -->
+
+<!-- FOOTER -->
+
+<div id="footer">
+<p>&copy; <?php echo fottertitle; ?></p>
+</div>
+
+<!--END FOOTER -->
+
+<!-- GLOBAL SCRIPTS -->
+<script src="<?php echo asset_url(); ?>plugins/bootstrap/js/bootstrap.min.js"></script>
+<script src="<?php echo asset_url(); ?>plugins/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+<!-- END GLOBAL SCRIPTS -->
+
+<script src="<?php echo asset_url(); ?>plugins/validationengine/js/jquery.validationEngine.js"></script>
+<script src="<?php echo asset_url(); ?>plugins/validationengine/js/languages/jquery.validationEngine-en.js"></script>
+<script src="<?php echo asset_url(); ?>plugins/jquery-validation-1.11.1/dist/jquery.validate.min.js"></script>
+
+
+<!-- apps -->
+<script src="<?php echo asset_url(); ?>dist/js/app.min.js"></script>
+<script src="<?php echo asset_url(); ?>dist/js/app.init.js"></script>
+<!-- slimscrollbar scrollbar JavaScript -->
+<script src="<?php echo asset_url(); ?>libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+<!--Wave Effects -->
+<script src="<?php echo asset_url(); ?>dist/js/waves.js"></script>
+<!--Menu sidebar -->
+<script src="<?php echo asset_url(); ?>dist/js/sidebarmenu.js"></script>
+<!--Custom JavaScript -->
+<script src="<?php echo asset_url(); ?>dist/js/custom.min.js"></script>
+<!--This page JavaScript -->
+<!-- Chart JS -->
+<script src="<?php echo asset_url(); ?>dist/js/pages/dashboards/dashboard1.js"></script>
+
+<script src="<?php echo asset_url(); ?>libs/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo asset_url(); ?>dist/js/pages/datatable/custom-datatable.js"></script>
+<script src="<?php echo asset_url(); ?>dist/js/pages/datatable/datatable-basic.init.js"></script>
+
+<?php echo $jsfile; ?>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+
+<script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script>
+$(function() {
+
+
+
+$("#newcode").change(function() {
+var val = $('#newcode').val();
+$("#new").hide();
+$("#code").val(1);
+$("#p").html("");
+if (val == "1") {
+$("#new").show();
+$("#code").val('');
+}
+});
+
+});
+</script>
+<script src="https://www.srisankaratv.com/admin_manage/assets/libs/moment/moment.js"></script>
+<script src="https://www.srisankaratv.com/admin_manage/assets/libs/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker-custom.js"></script>
+
+<script>
+$('.today_date_time').bootstrapMaterialDatePicker({format: 'YYYY-MM-DD', time:false});
+</script>
+
+<script>
+$(function() {
+$('#organization_validate').validate({
+ignore: [],
+rules: {},
+errorClass: 'help-block',
+errorElement: 'span',
+
+highlight: function(element, errorClass, validClass) {
+$(element).parents('.form-group').addClass('has-error');
+},
+unhighlight: function(element, errorClass, validClass) {
+$(element).parents('.form-group').removeClass('has-error');
+}
+});
+});
+</script>
+
+<script type="text/javascript">
+var empty_string = /^\s*$/;
+
+function validate(val) {
+
+$("#alert").remove();
+if ($("#organization_validate").valid()) {
+$("#alert").remove();
+$("#msgbox").append("<div class='alert' id='alert'></div>");
+$("#alert").removeClass().html('Please Wait Processing....').addClass('alert alert-success').fadeIn(1000);
+var cnt = $("#code").val();
+var prefix = $("#prefix").val();
+$("#p").html("");
+$.post('<?php echo base_url(); ?>voucher/generatecodes', {
+cnt: cnt,
+prefix: prefix,
+val: val
+}, function(data) {
+$("#p").html(data);
+$("#alert").remove();
+
+});
+
+}
+}
+
+function validatefinal() {
+$("#alert").remove();
+if ($("#organization_validate").valid()) {
+return true;
+} else {
+return false;
+}
+}
+</script>
+
+
+</body>
+<!-- END BODY-->
+
+</html>

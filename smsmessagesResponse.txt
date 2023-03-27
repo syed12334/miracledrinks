@@ -1,0 +1,2 @@
+{"smslist":{"sms":{"reason":"success","code":"000","clientsmsid":1297894756,"messageid":286693827,"mobileno":"+919986571768","status":"success"}}}	Monday 27th 2023f March 2023 10:42:22 AM
+{"smslist":{"sms":{"reason":"success","code":"000","clientsmsid":1297894756,"messageid":286693827,"mobileno":"+919986571768","status":"success"}}}

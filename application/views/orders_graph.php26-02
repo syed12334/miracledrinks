@@ -1,0 +1,74 @@
+<?php
+
+if(!empty($fromdate) && !empty($todate)){	
+	
+	$prev = date('Y-m-d',strtotime($fromdate));	
+	$today = date('Y-m-d',strtotime($todate));
+}
+else{
+	$prev = date("Y-m-d",strtotime("-1 month"));
+	$today = date("Y-m-d");
+}
+
+
+$dates = $this->home_db->arrange_dates($prev, $today);
+?>
+<html>
+
+
+<head>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+  google.load("visualization", "1.1", {packages:["bar"]});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Weeks');
+      data.addColumn('number', 'Success Orders');
+      data.addColumn('number', 'Failed Orders');
+      data.addColumn('number', 'Total Orders');
+
+      data.addRows([
+		        <?php 
+		        $i = 0;
+		        foreach ($dates as $r){ $i = $i+1;
+					$val = "th";
+					switch(substr( $i, -1)){
+						case 1: $val = "st";
+								break;
+						case 2: $val = "nd";
+								break;
+						case 3: $val = "rd";
+								break;
+					}
+					$first = reset($r);
+					$last = end($r);
+					$resf = $this->master_db->countRec("","orders"," where DATE(ordered_date) between '$first' and '$last' and status>=0");
+					$rese = $this->master_db->countRec("","orders"," where DATE(ordered_date) between '$first' and '$last' and status=-1");
+				?>
+		        ["<?php echo $i.$val;?> week",  <?php echo $resf;?>, <?php echo $rese;?>, <?php echo $resf+$rese;?>],
+		        <?php }?>
+      ]);
+
+      var options = {
+        chart: {
+          title: 'Product Orders History',
+          subtitle: 'from <?php echo $prev;?> to <?php echo $today;?>'
+        },
+        bars: 'horizontal',            
+        width: 900,
+        height: 600
+      };
+
+      var chart = new google.charts.Bar(document.getElementById('linechart_material'));
+
+      chart.draw(data, options);
+    }
+  </script>
+</head>
+<body>
+  <div id="linechart_material"></div>
+</body>
+</html>
